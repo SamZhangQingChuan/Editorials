@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{xeCJK}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{minted}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{parskip}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{ragged2e}
+\usepackage[normalem]{ulem}
+
+\hypersetup{hidelinks}
+
+\title{约瑟夫环\footnote{\url{https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/}}}
+\author{张晴川\footnote{更多内容请访问：\url{https://github.com/SamZhangQingChuan/Editorials}}}
+
+\begin{document}
+\maketitle
+\section{题意}
+$0,1,\ldots,n-1$ 这 $n$ 个数字排成一个圆圈，从数字$0$开始，每次从这个圆圈里删除第 $m$ 个数字。求出这个圆圈里剩下的最后一个数字。
+
+例如$0, 1, 2, 3, 4$这五个数字组成一个圆圈，从数字$0$开始每次删除第$3$个数字，则删除的前$4$个数字依次是$2;0;4;1$，因此最后剩下的数字是$3$。
+
+
+\section{数据范围}
+\begin{itemize}
+\item $1 \le n \le 10^5$
+\item $1 \le m \le 10^6$
+\end{itemize}
+
+
+\section{题解}
+
+一句话题解：通过剩余 $x$ 个人时的答案反推 $x+1$ 个人时的答案。由于只剩一个人的时候答案必然为 $0$，层层反推即可。
+
+
+首先我们用 $f(n)$ 表示剩余 $n$ 个人的时候，从\textbf{当前}起点开始走$f(n)$步会到达赢家的位置。
+
+
+假设现在有$n$个人活着，那么\textbf{当前}起点是$0$。而杀完编号为$m-1$的人后，\textbf{新的}起点则是$m$。假设 $f(n-1)$ 已知，那么我们需要走 $m$ 步到新的起点，再走 $f(n-1)$ 步走到赢家位置。即一共需要走的步数为： 
+$$
+\underbrace{m}_{\text{新起点}} + \underbrace{f(n-1)}_{\text{额外步数}}
+$$
+
+由于是在环上走，所以步数需要对 $n$ 取模，所以最终结果是：
+$$
+f(n) = (m + f(n-1)) \bmod {n}
+$$
+
+
+\section{代码}
+\inputminted[linenos,autogobble]{cpp}{Josephus.cpp}
+
+
+
+
+
+
+
+
+\end{document}
