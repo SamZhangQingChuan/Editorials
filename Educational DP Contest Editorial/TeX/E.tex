@@ -1,0 +1,21 @@
+\section{Knapsack 2}
+\subsection*{题意}
+同上题，仅数据范围不同：
+\subsection*{数据范围}
+\begin{itemize}
+\item $1 \leq n \leq 100$
+\item $1 \leq W \leq \bm{10^9}$
+\item $1 \leq v_i \leq \bm{10^3}$
+\end{itemize}
+
+\subsection*{题解}
+
+由于 $W$达到了$10^9$ 的量级，之前的$O(nW)$算法无法通过，但由于每样物品的价值上限仅为 $10^3$，我们可以另辟蹊径。设${\texttt{dp[i][j]}}$表示\textbf{``只考虑前$i$ 个物品的情况下，总价值是 $j$ 所需的最小容量"}。那么在计算${\texttt{dp[i][j]}}$的时候，所有情况依然可以分成两类考虑：
+\begin{enumerate}
+    \item \textbf{拿第 $i$ 件物品}，那么别的物品的总价值需要凑出 $j - v_i$，而由于每样物品只能拿一件，所以我们只需要考虑前 $i-1$ 件物品的最优选取方式，即最终重量为 ${\texttt{dp}}[i-1][j-v_i] + w_i$。
+    \item \textbf{不拿第 $i$ 件物品}，那么别的物品需要凑出$j$的价值 。由于我们选择不拿第$i$件物品，现在只需要考虑前 $i-1$ 件物品的最优选取方式，即最小重量为 ${\texttt{dp}}[i-1][j]$。
+\end{enumerate}
+计算完所有状态的值后，只需要选取满足重量上限的最大价值即可。
+\subsection*{核心代码}
+\inputminted[linenos,autogobble]{cpp}{../Code/E.cpp}
+\newpage

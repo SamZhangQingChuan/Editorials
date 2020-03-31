@@ -1,0 +1,36 @@
+\section{LCS}
+\subsection*{题意}
+给定字符串$s$和$t$，求最长公共子序列（不需要连续）。
+
+\subsection*{数据范围}
+\begin{itemize}
+\item $1 \leq |s|, |t| \leq 3000$
+\end{itemize}
+
+
+\subsection*{题解}
+% 首先注意到一般认为\textit{子序列}是\textbf{不需要}连续的。
+
+设 $s,t$ 的长度分别为 $n,m$。
+现在考虑两个串的最后字符，一共有两种情况：
+\begin{enumerate}
+\item $s_n = t_m$，那么答案最末字符显然等于也等于它们俩。
+\item $s_n \ne t_m$, 那么两者必有其一不在答案中，所以答案为${\texttt{LCS}}(s_{1\ldots n},t_{1\ldots m-1})$ 和${\texttt{LCS}}(s_{1\ldots n-1},t_{1\ldots m})$的较长者。
+\end{enumerate}
+
+用 ${\texttt{dp[i][j]}}$ 表示$s$的前 $i$ 个字符和$t$的前$j$个字符的 {\texttt{LCS}} 长度。
+那么可以得到转移方程
+\begin{equation*}
+{\texttt{dp[i][j]}} = 
+\begin{cases}
+ 0 & i = 0 \text{ or } j = 0\\
+ {\texttt{dp[i-1][j-1]}} + 1 & {\texttt{s[i]}} == {\texttt{t[j]}}\\
+\max({\texttt{dp[i-1][j]}},{\texttt{dp[i][j-1]}}) & \text{otherwise} \\
+\end{cases}
+\end{equation*}
+
+答案本身只需要通过 ${\texttt{dp[i][j]}}$ 的转移来源恢复即可，参考以下代码。
+
+\subsection*{核心代码}
+\inputminted[linenos,autogobble]{cpp}{../Code/F.cpp}
+\newpage

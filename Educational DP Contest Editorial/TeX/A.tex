@@ -1,0 +1,25 @@
+\section{Frog 1}
+\subsection*{题意}
+有$n$块石头排成一排，第 $i$块石头的高度为 $h_i$。青蛙现在站在第 $1$ 块石头上。它可以从第 $i$ 块石头跳到第 $i+1$ 或者 $i+2$ 块石头上。从第 $i$ 块石头跳到第 $j$ 块需要消耗 $|h_j - h_i|$ 点体力。请求出跳到第 $n$ 块石头所需的最小体力值。
+
+\subsection*{数据范围}
+\begin{itemize}
+\item $1\le n\le 10^5$
+\end{itemize}
+
+
+\subsection*{题解}
+
+设 $\texttt{dp[i]}$ 为跳到第 $i$ 块石头上所需的最小体力值，则 $\texttt{dp[n]}$ 为题之所求。根据题意，不难发现有：
+\begin{equation*}
+{\texttt{dp[i]}} = 
+\begin{cases}
+ 0 & i = 1\\
+ |h_2 - h_{1}| & i = 2\\
+\min(\texttt{dp[i-1]} + |h_i - h_{i-1}|,\texttt{dp[i-2]} + |h_i - h_{i-2}|) & i \ge 3 \\
+\end{cases}
+\end{equation*}
+$O(N)$ 递推一下即可。
+\subsection*{核心代码}
+\inputminted[linenos,autogobble]{cpp}{../Code/A.cpp}
+\newpage

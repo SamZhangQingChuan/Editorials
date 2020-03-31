@@ -1,0 +1,40 @@
+\section{Candies}
+\subsection*{题意}
+现在有 $n$ 个小孩和 $k$ 颗糖。第 $i$ 个小孩获得的糖数必须在 $[0,a_i]$ 之内，求一共有多少种把糖发完的方法。
+
+\subsection*{数据范围}
+\begin{itemize}
+\item $1 \leq n \leq 100$
+\item $0 \leq k \leq 10^5$
+\item $0 \leq a_i \leq k$
+\end{itemize}
+
+
+\subsection*{题解}
+
+有了之前背包的经验，显然我们可以设状态 ${\texttt{dp[i][j]}}$ 表示前 $i$ 个人一共发了 $j$ 颗糖的方法，并且转移方程就是枚举当前的人获得的糖数 $c$：
+$$
+{\texttt{dp[i][j]}} = \sum_{c = 0}^{a_i} {\texttt{dp[i-1][j-c]}}
+$$
+
+但可达鸭眉头一皱，发现事情并不简单。注意到状态总数为 $10^7$，而每个状态最多有$k \le 10^5$ 个转移，总复杂度高达 $10^{12}$，于是无法通过。
+
+我们仔细观察上面的转移方程，可以发现同一行相邻的两个状态其实差别不大：
+$$
+{\texttt{dp[i][j]}} = {\texttt{dp[i-1][j-c]}} + \cdots + {\texttt{dp[i-1][j]}}
+$$
+$$
+{\texttt{dp[i][j+1]}} = {\texttt{dp[i-1][j-c+1]}} + \cdots + {\texttt{dp[i-1][j+1]}}
+$$
+
+通过比对，可以看到其实只首尾两项，于是得到：
+$$
+{\texttt{dp[i][j+1]}} = {\texttt{dp[i][j]}} - {\texttt{dp[i-1][j-c]}} + {\texttt{dp[i-1][j+1]}}
+$$
+现在计算每个状态只需要 $O(1)$ 次运算，可以通过。
+
+\subsection*{核心代码}
+\inputminted[linenos,autogobble]{cpp}{../Code/M.cpp}
+\emph{注：本题也可以使用前缀和加速，原理大同小异。}
+
+\newpage
