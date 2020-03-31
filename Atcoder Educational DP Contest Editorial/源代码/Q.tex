@@ -1,0 +1,49 @@
+\section{Flowers}
+\subsection*{题意}
+有 $n$ 朵花，从左到右编号为 $1$ 到 $n$。每朵花有两个属性：高度 $h_i$ 和美丽值 $a_i$。
+
+我们需要选出一个子序列（可以不连续），使得：
+\begin{enumerate}
+\item 最大化选择的花美丽值的总和 
+\item 选择的花的高度从左到右严格递增
+\end{enumerate}
+\subsection*{数据范围}
+\begin{itemize}
+\item $1 \leq n \leq 2 \times 10^5$
+\item $1 \leq h_i \leq n$
+\item $h_i$ 两两不同
+\item $1 \leq a_i \leq 10^9$
+\end{itemize}
+
+\subsection*{题解}
+
+\paragraph{朴素做法}
+我们从前向后考虑，设 $\texttt{dp}[i]$ 表示以第 $i$ 朵花结尾的子序列的的最大的美丽值之和。那么一个显然的转移方程是：
+$$
+\texttt{dp}[i] = a_i + \max\{\texttt{dp}[j]\mid j<i \text{ and } h_j < h_i\}
+$$
+
+可惜复杂度是 $O(n^2)$ 的，但我们可以思考如何优化。
+
+\paragraph{单调性优化}
+假设我们现在在计算 $\texttt{dp}[i]$ 的值，有$j$ 和 $k$ 两个决策可以考虑。 
+
+如果$j$ 比 $k$ 更优，即 $\texttt{dp}[j] > \texttt{dp}[k]$ ，并且 $h_j < h_k$，会发生什么呢？
+\begin{enumerate}
+\item 如果可以从 $k$ 转移，因为 $h_j < h_k $，同样也可以从 $j$ 转移。所以不会考虑比 $j$ 劣的 $k$。
+\item 如果无法从 $k$ 转移，那自然不需考虑决策 $k$。
+\end{enumerate}
+
+综上，如果我们只考虑``有效"决策，应该尽可能从高度$h$大的决策转移。
+
+现在我们考虑用 \mintinline{cpp}{set<pair<long,long>>} 来维护所有有效决策。其中第一维表示高度 $h$，第二维表示对应的$\texttt{dp}$值。在计算 $\texttt{dp}[i]$ 时，使用二分找出比$h_{i}$小的那些决策中最接近的转移即可。
+
+由于题目保证 $a_i$ 均为正数，不需要考虑 \mintinline{cpp}{{h[i],dp[i]}} 本身立刻成为无效决策。只需用 $\texttt{dp}[i]$ 剔除掉比  $h_i$ 大，但更劣的决策即可。详情参考代码。
+
+
+
+
+
+\subsection*{核心代码}
+\inputminted[linenos,autogobble]{cpp}{./Code/Q.cpp}
+\newpage
