@@ -1,0 +1,31 @@
+\section{Digit Sum}
+\subsection*{题意}
+求 $\{1,2,\ldots,k\}$ 中有多少数字的各位之和是 $d$ 的倍数。
+\subsection*{数据范围}
+\begin{itemize}
+\item $1 \leq k < 10^{10000}$
+\item $1 \leq d \leq 100$
+\end{itemize}
+
+\subsection*{题解}
+
+这题的套路是\textbf{\text{数位DP}}。这类题目的基本框架就是求某一个范围$[l,r]$内有多少个数满足 XXX 性质。由于 $[l,r] = [0,r] - [0,l-1]$，我们通常转化为只有上界，而下界为$0$的两个独立 case 分别计算。于是以下只考虑 $[0,r]$ 的计算方法。
+
+
+假设 ${r}[0\ldots n-1]$ 是一个 $n$位整数，我们考虑以如下方式暴力枚举所有小于等于 $r$ 的非负整数 $x$。
+
+\inputminted[linenos,autogobble]{cpp}{./Code/S2.cpp}
+
+这里我们运用\textbf{01背包}的思想：在考虑第 $i$ 件物品的时候，只关心之前选择的\textbf{总重量}以及\textbf{总价值}，而不需要知道具体的方案是什么 —— 即合并等价状态。回到本题，我们枚举第 $i$ 位的时候，只有这些信息是重要的：
+\begin{enumerate}
+\item 之前的数位和。
+\item 是否已经小于上界 $r$，如果是的话，那么可以枚举 \texttt{[0-9]}，否则只可以枚举到 $r[i]$ —— 因为我们只考虑小于等于 $r$ 的数。 
+\end{enumerate}
+
+那么我们可以设 \mintinline{cpp}{dp[i][j][k = 0/1]} 表示在考虑第 $i$ 位\textbf{之前}的数位和(模 $d$) 等于 $j$，以及是否已经小于上界的方案数。
+
+转移也很简单，对于状态 \mintinline{cpp}{dp[i][j][k]}，只需要枚举第 $i$ 位的值 \mintinline{cpp}{x[i]}，那么转移到的状态为 \mintinline{cpp}{dp[i+1][(j+x[i])%d][k or x[i]<r[i]]}。最后一个值的意思是，小于上界的条件是\emph{之前已经小于上界}或者\emph{当前位小于上界对应位}。
+
+\subsection*{核心代码}
+\inputminted[linenos,autogobble]{cpp}{./Code/S.cpp}
+\newpage

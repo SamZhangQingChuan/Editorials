@@ -1,0 +1,42 @@
+\section{Grouping}
+\subsection*{题意}
+有 $n$ 只兔子，现在把兔子分为若干组，如果兔子 $i$ 和兔子 $j$ 在同一组，收益就加上 $ a_{i,j}$。求最大收益。
+\subsection*{数据范围}
+\begin{itemize}
+\item $1 \leq n \leq 16$
+\end{itemize}
+
+
+\subsection*{题解}
+
+首先设 $\texttt{cost}[\texttt{mask}]$ 表示 $\texttt{mask}$ 对应的子集划分在一组的收益。这一步计算非常简单，用暴力的 $O(2^n\cdot n^2)$ 方法即可：
+\inputminted[linenos,autogobble]{cpp}{./Code/U2.cpp}
+
+接下来设 $\texttt{dp}[\texttt{mask}]$ 表示将$\texttt{mask}$分成若干组的最大收益。计算方法也很简单，对于 $\texttt{mask}$，只需要枚举子集 $\texttt{submask}$ 递归计算：
+$$
+\texttt{dp}[\texttt{mask}] = \max_{\texttt{submask} \subseteq \texttt{mask}} (\texttt{cost}[\texttt{submask}] + \texttt{dp}[\texttt{mask} - \texttt{submask}])
+$$
+
+但朴素的方法会导致复杂度高达 $O(2^n \cdot 2^n) = O(4^n)$。
+
+我们考虑用如下方式枚举子集的子集：
+\inputminted[linenos,autogobble]{cpp}{./Code/U3.cpp}
+
+不难发现，\mintinline{cpp}{submask = (submask - 1) & mask} 的本质是把当前 $\texttt{submask}$ 的最后一个 $1$ 去掉，并恢复之前被去掉的 $1$。举个例子：
+\begin{align*}
+    \texttt{mask} &= 10101\\
+    \texttt{submask} &= 10100\\
+    \texttt{(submask - 1) \& mask} &= 10001\\
+\end{align*}
+
+，其中第$3$位被去掉，第$5$位被加上。
+
+因为这种枚举方法每进行一步一定会生成一个新的子集，效率达到最优。我们现在只需要计算复杂度是否可以接受即可。
+
+注意到每个大小为 $i$ 的子集都包含 $2^i$ 个子集，而一共有$\displaystyle\binom{n}{i}$ 个大小为 $i$ 的子集。所以根据二项式定理，总运算次数应等于：
+$$
+\sum_{i = 0}^n \binom{n}{i}2^i = \sum_{i = 0}^n \binom{n}{i}2^i1^{n-i} = (2+1)^n = 3^n
+$$
+于是可以通过。
+
+\newpage

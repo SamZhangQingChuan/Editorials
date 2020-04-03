@@ -1,0 +1,39 @@
+\section{Longest Path}
+\subsection*{题意}
+给定一个 $n$ 个点，$m$ 条边的\textbf{有向无环图}，求图中最长路径的长度。定义路径长度为边的数量。
+\subsection*{数据范围}
+\begin{itemize}
+\item $2 \leq N \leq 10^5$
+\item $1 \leq M \leq 10^5$
+
+\end{itemize}
+
+\subsection*{题解}
+
+本题是\textbf{所有}动态规划模型的\textbf{理论}基础。抽象地说，所有动态规划的本质都是在一张（带权）有向无环图上求最长路，之前做的\textit{背包}，\textit{最长公共子序列} 皆是如此。对应关系如下：
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+ \textbf{动态规划} & \textbf{有向无环图} \\
+ \hline
+ 状态 & 节点\\ 
+ \hline
+ 转移方程 & 边\\ 
+ \hline
+ 无后效性 & 图中无环\\ 
+ \hline
+ $\cdots$ & $\cdots$\\
+ \hline
+\end{tabular}
+\end{center}
+
+这题的转移方程比较显然，即 ${\texttt{dp}[i]}$ 表示以节点 $i$ 为终点的路径中最长的长度。转移方程为：
+$$
+{\texttt{dp}[i]} = \max\{{\texttt{dp}[j]} + 1 \mid \text{存在边 }\ j\rightarrow i\}
+$$
+
+有向无环图最重要的性质就是没有环，这使得我们可以对节点进行拓扑排序，并按照拓扑序的顺序计算 {\texttt{dp}} 状态的值。相信你对于宽度优先搜索（{\texttt{BFS}}）没有什么问题，以下我给出一种用深度优先搜索（{\texttt{DFS}}）的做法，又称记忆化搜索。
+
+\subsection*{核心代码}
+\inputminted[linenos,autogobble]{cpp}{./Code/G.cpp}
+\newpage

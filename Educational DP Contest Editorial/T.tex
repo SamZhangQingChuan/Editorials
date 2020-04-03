@@ -1,0 +1,50 @@
+\section{Permutation}
+\subsection*{题意}
+给定一个由 \texttt{'<'} 和 \texttt{'>'} 组成的长度为 $n-1$ 的字符串 $s$。
+
+求有多少 $1-n$ 的排列 $p$ 与 $s$ 的描述相匹配，即如果$s_i = \texttt{'<'}$，则 $p_i < p_{i+1}$；如果$s_i = \texttt{'>'}$，则 $p_i > p_{i+1}$。
+
+\subsection*{数据范围}
+\begin{itemize}
+\item $1 \leq n \leq 3000$
+\end{itemize}
+
+\subsection*{题解}
+
+
+首先考虑暴力枚举加剪枝的做法。从最后一位开始确定，假设 $p_n = x$ ，那么我们想求出有多少种 $\{1,\ldots n\}\setminus \{x\}$ 的排列满足 $s_{1\ldots n-2}$ 的要求，且最末元素小于（或大于） $x$。 
+
+但注意到，集合 $\{1,\ldots n\}\setminus \{x\}$ 和集合$\{1,\ldots n-1\}$ 都包含 $n-1$ 个互不相同的数，只考虑顺序的话，在结构上并无不同。$\{1,\ldots n\}\setminus \{x\}$的排列以第$i$个数结尾的方案数等于 $\{1,\ldots n-1\}$的排列以第$i$个数结尾的方案数。
+
+现在设 $\texttt{dp}[l][i]$ 表示 $\{1,\ldots l\}$ 有多少种排列满足$s_{1\ldots l-1}$的要求且以第 $i$ 个数结尾，其中 $\texttt{dp}[1][1] = 1$。
+
+可以得到转移方程：
+$$
+\texttt{dp}[l][x] = 
+\begin{cases}
+ \displaystyle\sum_{i = 1}^{x-1}\texttt{dp}[l-1][i] & s_{l-1} = \texttt{'<'}\\
+ \displaystyle\sum_{i = x}^{l-1}\texttt{dp}[l-1][i] & s_{l-1} = \texttt{'>'}\\
+\end{cases}
+$$
+
+注：在 \texttt{'>'} 的情况下，下标从 $x$ 开始是因为$\{1,\ldots l\}\setminus \{x\}$ 的第$x$个元素是 $x+1$ 比 $x$ 大。
+
+上述写法是$O(n^3)$ 的，无法通过，但注意到前缀和形式可以用递推优化到 $O(n^2)$：
+
+$$
+\texttt{dp}[l][x] = 
+\begin{cases}
+\texttt{dp}[l][x-1] + \texttt{dp}[l-1][x-1] & s_{l-1} = \texttt{'<'}\\
+\texttt{dp}[l][x+1] + \texttt{dp}[l-1][x] & s_{l-1} = \texttt{'>'}\\
+\end{cases}
+$$
+
+
+
+
+\newpage
+\subsection*{核心代码}
+
+
+\inputminted[linenos,autogobble]{cpp}{./Code/T.cpp}
+\newpage
