@@ -1,0 +1,32 @@
+\section{Intervals}
+\subsection*{题意}
+有 $m$ 个区间 $[l_i,r_i]$，第 $i$ 个区间的权值为 $a_i$。现在要用 \textbf{0} 和 \textbf{1} 填一个长度为$n$的数组（下标从 $1$开始）。
+
+对于第 $i$ 个区间，如果 $[l_i,r_i]$内存在任何一个位置是 \textbf{1}，就加上它的权值。求最大权值和。
+
+
+\subsection*{数据范围}
+\begin{itemize}
+\item $1 \leq n \leq 2\times 10^5$
+\item $1 \leq m \leq 2\times 10^5$
+\item $1 \leq l_i \leq r_i \leq n$
+\item $|a_i| \leq 10^9$
+\end{itemize}
+
+\subsection*{题解}
+
+这题需要你会使用线段树进行区间更新和区间求最大值。
+
+我们设 $\texttt{dp}[i]$ 表示最后一个 \textbf{1} 的位置是 $i$ 的最大权值和，$\texttt{sum}[i]$ 表示所有包含 $i$ 的区间的权值之和。$\texttt{sum}[i]$ 可以用差分、线段树或者其他数据结构求出。
+
+计算 $\texttt{dp}[i]$ 的时候，我们考虑枚举倒数第二个 \textbf{1} 所在的位置 $j$（为了方便实现假设 0 处为 \textbf{1}）。如果没有区间同时覆盖 $i$ 和 $j$ 的话，可以得到转移方程: 
+$$
+\texttt{dp}[i] = \max_{0\le j < i} (\texttt{sum}[i] + \texttt{dp}[j])
+$$
+
+但如果有某个区间$[l,r]$同时覆盖 $i$ 和 $j$的话，会导致重复计算贡献。解决方法也很简单，我们考虑用线段树维护 $\texttt{dp}$ 数组。在进入$[l,r]$ 的时候，给 $[l,r]$ 每个元素 ${-}a$；在离开$[l,r]$ 的时候，给 $[l,r]$ 每个元素 ${+}a$，这一步用区间更新即可。具体参考代码。
+
+\newpage
+\subsection*{核心代码}
+\inputminted[linenos,autogobble]{cpp}{./Code/W.cpp}
+\newpage
