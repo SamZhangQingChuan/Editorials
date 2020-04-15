@@ -7,6 +7,8 @@
 写作计划
 - [x] Atcoder Edu DP Round 题解
 - [x] 约瑟夫环
+- [ ] 扩展欧几里得
 - [ ] KMP/AC自动机
 - [ ] 背包大全
 - [ ] 后缀自动机
+- [ ] Surreal Number
