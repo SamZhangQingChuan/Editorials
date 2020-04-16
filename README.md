@@ -7,6 +7,7 @@
 写作计划
 - 扩展欧几里得
 - KMP/AC自动机
+- [palindromic series](https://codeforces.com/blog/entry/19193)
 - 背包大全
 - 后缀自动机
-- Surreal Number
+- [Surreal Number](https://www.whitman.edu/Documents/Academics/Mathematics/Grimm.pdf)
