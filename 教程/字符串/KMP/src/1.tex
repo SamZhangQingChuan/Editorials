@@ -55,7 +55,7 @@
 \includegraphics[width=8cm]{2.png}
 \end{center}
 
-所以除了 $\texttt{next[i]}$ 外，其余元素都是 $next[i]$ 的 $border$，于是可以得到：
+所以除了 $\texttt{next[i]}$ 外，其余元素都是 $\texttt{next[i]}$ 的 $\texttt{border}$，于是可以得到：
     $$\texttt{borders[i]} = \{\texttt{next[i]}\} \cup \texttt{borders[next[i]]}$$
 展开写的话就是：
     $$\texttt{borders[i]} = \{\texttt{next[i]},\texttt{next[next[i]]},\ldots,0\}$$
