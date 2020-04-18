@@ -6,7 +6,7 @@
 
 写作计划
 - 扩展欧几里得
-- KMP/AC自动机
+- AC自动机
 - [palindromic series](https://codeforces.com/blog/entry/19193)
 - 背包大全
 - 后缀自动机
