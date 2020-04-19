@@ -12,6 +12,8 @@
 \usepackage{cancel}
 \usepackage{ragged2e}
 \usepackage[normalem]{ulem}
+\usepackage{marginnote}
+\usepackage{geometry}
 
 \hypersetup{hidelinks}
 
@@ -30,22 +32,22 @@
 \section{算法}
 首先我们考虑用一个没有出现过的字符 $\texttt{\#}$ 把 $\texttt{S}$ 和 $\texttt{T}$ 拼成一个串 $\texttt{S\#T}$，例如 $\texttt{14\#114514}$。
 
-现在考虑对于位置 $\texttt{i}$，有哪些以它结尾的串等于相同长度的\textbf{前缀}，以 $\texttt{i}$结尾的前缀本身除外。例如对于串 $\texttt{aba\#ababa}$，最后一个位置 $\texttt{i} = 9$ 的话，匹配的长度为$\{3,1,0\}$，分别对应 $\{\texttt{aba},\texttt{a},\epsilon\}$ \footnote{$\epsilon$ 表示空串}，定义这样的串为以 $\texttt{i}$ 结尾的\texttt{border}。 
-
-\paragraph{问题转化} 我们用 $\texttt{match(i,len)} = \texttt{true}/\texttt{false}$ 表示以 $\texttt{i}$ 结尾，长度为 $\texttt{len}$ 的串是否是 \texttt{border}，用$\texttt{borders[i]}$ 表示以 $\texttt{i}$ 结尾，所有\texttt{border} 的集合。原问题可以转化为：对于多少位置 $\texttt{i}$，$\texttt{match(i,|S|)} = \texttt{true}$。
+现在考虑对于位置 $\texttt{i}$，有哪些以它结尾的串等于相同长度的\textbf{前缀}，以 $\texttt{i}$结尾的前缀本身除外。例如对于串 $\texttt{aba\#ababa}$ 的最后一个位置 $\texttt{i} = 9$ ，匹配的长度为$\{3,1,0\}$，分别对应 $\{\texttt{aba},\texttt{a},\epsilon\}$\footnote{$\epsilon$ 表示空串}，定义集合里的串为以 $\texttt{i}$ 结尾的\textbf{\texttt{border}}。\marginnote{\texttt{border}：既是前缀也是后缀}
+ 
+\paragraph{问题转化} 我们用 $\texttt{match(i,len)} = \texttt{True}/\texttt{False}$ 表示以 $\texttt{i}$ 结尾，长度为 $\texttt{len}$ 的串是否是 \texttt{border}，用$\texttt{borders[i]}$ 表示以 $\texttt{i}$ 结尾，所有\texttt{border} 的集合。原问题可以转化为：对于多少位置 $\texttt{i}$，$\texttt{match(i,|S|)} = \texttt{True}$。
 
 \dotfill     
 
-\paragraph{如何求$\texttt{borders[i]}$} 首先我们可以发现 $\texttt{match(i,len)} = \texttt{true}$ 成立有两个条件：
+\paragraph{如何求$\texttt{borders[i]}$} 首先我们可以发现 $\texttt{match(i,len)} = \texttt{True}$ 成立有两个条件：
 \begin{enumerate}
-\item $\texttt{match(i-1,len-1)} = \texttt{true}$
+\item $\texttt{match(i-1,len-1)} = \texttt{True}$
 \item $\texttt{S[len]} = \texttt{S[i]}$
 \end{enumerate}
 \begin{center}
 \includegraphics[width=8cm]{1.png}
 \end{center}
 
-于是我们可以枚举 $\texttt{borders[i-1]}$ 里的元素，如果下一位恰好和 $\texttt{S[i]}$ 匹配，那么就 $\texttt{+1}$ 就可以得到 $\texttt{borders[i]}$ 里的一个元素。最后加入 $0$ 即可。设 $n = |S|+|T|$，由于一共有 $n$ 个位置，每次最多枚举 $n$ 个元素，复杂度为 $O(n^2)$ ，需要加速。
+于是我们可以枚举 $\texttt{borders[i-1]}$ 里的元素，如果下一位恰好和 $\texttt{S[i]}$ 匹配，那么就 $\texttt{+1}$ 就可以得到 $\texttt{borders[i]}$ 里的一个元素。最后加入 $0$ 即可。设总串长 $n = |S|+1+|T|$，由于一共有 $n$ 个位置，每次最多枚举 $n$ 个元素，复杂度为 $O(n^2)$ ，需要加速。
 
 \dotfill
 
@@ -63,13 +65,29 @@
 
 \dotfill
 
-\paragraph{递推求解} 由上述解释，只需要求出 \texttt{next[i]}，就可以得到整个 \texttt{borders[i]}。如果知道了\texttt{borders[i]}，$\texttt{next[i+1]}$就等于\texttt{borders[i]}里从大到小第一个可以转移到 $\texttt{i+1}$ 的元素再加 $1$  。如果全部无法转移，那么 $\texttt{next[i+1]} = 0$。
+\paragraph{递推求解} 由上述解释，只需要求出 \texttt{next[i-1]}，就可以得到整个 \texttt{borders[i-1]}。如果知道了\texttt{borders[i-1]}，\texttt{next[i]}就等于\texttt{borders[i-1]}里从大到小第一个可以转移到 $\texttt{i}$ 的元素再加 $1$  。如果全部都无法转移，那么 $\texttt{next[i]} = 0$。
 
 \dotfill
 
 \paragraph{完全解决} 
 
 在求出所有 $\texttt{next[i]}$ 之后，只需要计算有哪些位置的 $\texttt{next[i]} = |S|$ 即可。
+
+\dotfill
+
+\paragraph{总结} 
+
+一言以蔽之，KMP 算法的本质就是：
+\begin{center}
+\fbox{以增量法递推求出每个前缀的 \texttt{border} 集合}
+\end{center}
+
+
+\section{复杂度分析}
+
+寻找转移时，每失败一次就会减少一个 \texttt{border}，而每向右移一位最多添加一个，所以复杂度是线性的。
+
+
 
 \section{习题}
 \begin{enumerate}
