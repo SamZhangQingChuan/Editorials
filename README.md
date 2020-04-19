@@ -8,6 +8,7 @@
 - 扩展欧几里得
 - AC自动机
 - [palindromic series](https://codeforces.com/blog/entry/19193)
-- 背包大全
+- 背包全集
+- 红黑树
 - 后缀自动机
 - [Surreal Number](https://www.whitman.edu/Documents/Academics/Mathematics/Grimm.pdf)
