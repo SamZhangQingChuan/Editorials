@@ -6,6 +6,7 @@
 
 写作计划
 - 扩展欧几里得
+- Tarjan SCC/BCC
 - AC自动机
 - [palindromic series](https://codeforces.com/blog/entry/19193)
 - 背包全集
