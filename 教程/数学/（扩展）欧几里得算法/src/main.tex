@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{xeCJK}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{minted}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{parskip}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{ragged2e}
+\usepackage[normalem]{ulem}
+
+\hypersetup{hidelinks}
+
+\title{欧几里得算法及其扩展\footnote{更多内容请访问：\url{https://github.com/SamZhangQingChuan/Editorials}}}
+\author{张晴川\\\href{mailto:qzha536@aucklanduni.ac.nz}{\texttt{qzha536@aucklanduni.ac.nz}}}
+
+\begin{document}
+\maketitle
+\section{问题}
+\textbf{二元一次不定方程}：给定非负整数 $a,b,c(1 \le a,b,c \le 10^{18})$，求一组 $ax+by = c$ 的整数解 $(x,y)$。
+
+\section{定义}
+\begin{itemize}
+\item $a\mid b$ 表示 $a$ 整除 $b$，即存在 $k$ 满足 $b = ka$
+\item $\gcd(a,b)$ 表示 $a,b$ 的最大公约数 (greatest common divisor)。值得一提的是，最大公约数的定义其实是被所有公约数整除的数，不过在只考虑非负整数的情况下，也就相当于最大的那个公约数了。
+\end{itemize}
+
+\section{欧几里得算法（辗转相除法）}
+
+设 $g$ 是 $a$ 和 $b$ 的最大公约数，那么 $ax+by$ 一定也是 $g$ 的倍数（为什么？）。所以如果 $c$ 不是 $g$ 的倍数，直接返回无解。所以我们先考虑如何计算最大公约数 $\gcd(a,b)$：
+
+当 $b = 0$ 的时候，$\gcd(a,b) = \gcd(a,0) = a$。
+
+而$b \neq 0$的时候，我们用 $\gcd(a,b) = \gcd(a-b,b)$ 来减小问题规模。以下是证明，一共分为两步：
+\begin{enumerate}
+\item $a,b$ 的公约数一定是 $a-b,b$ 的公约数，不会遗漏：
+\begin{align*}
+d \mid a,d \mid b 
+&\implies a = a'd,b = b'd \\
+&\implies (a-b) = (a'-b')d,b = b'd \\
+&\implies d \mid (a-b), d \mid b
+\end{align*}
+\item $a-b,b$ 的公约数一定是 $a,b$ 的公约数，不会新增：
+\begin{align*}
+d \mid (a-b),d \mid b 
+&\implies (a-b) = c'd,b = b'd \\
+&\implies a = (c'+b')d,b = b'd \\
+&\implies d \mid (a-b), d \mid b
+\end{align*}
+
+\end{enumerate}
+
+于是得到$\gcd(a,b) = \gcd(a-b,b)$。注意到 $a\bmod b$ 相当于 $a$ 减去若干次 $b$，所以$\gcd(a,b) = \gcd(a\bmod b, b)$
+
+\subsection*{代码}
+
+欧几里得算法求最大公约数：
+\inputminted[linenos,autogobble]{cpp}{gcd.cpp}
+
+
+\section{扩展欧几里得算法}
+
+
+\subsection*{解的存在性}
+
+现在假设 $c$ 是 $\gcd(a,b)$ 的倍数，那么问题转化为如何解 $ax+by = \gcd(a,b)$，然后给解乘上 $\displaystyle \frac{c}{\gcd(a,b)}$ 即可。
+
+\subsection*{具体流程}
+
+假设存在两个等式：
+
+\begin{align*}
+    ax_1 + by_1 &= c_1\\
+    ax_2 + by_2 &= c_2\\
+\end{align*}
+
+可以得到： 
+\begin{align*}
+    a(x1-x_2) + b(y_1-y_2) &= c_1-c_2\\
+\end{align*}
+
+所以等式也可以像整数一样加减乘除。我们只需要以下两个方程开始，不断辗转相除直到等式右边是 $\gcd(a,b)$ 即可。
+
+\begin{align*}
+    1a + 0b &= a\\
+    0a + 1b &= b\\
+\end{align*}
+    
+具体参考以下代码。
+    
+    
+    
+
+\subsection*{代码}
+\inputminted[linenos,autogobble]{cpp}{exgcd.cpp}
+
+\section{应用：乘法逆元}
+
+\paragraph{问题}
+给定一对互素的正整数 $a$ 和 $m$，即 $\gcd(a,m) = 1$。求一个整数 $a^{-1}$ 满足 $aa^{-1}\equiv 0 \mod m$。
+
+\paragraph{解法}
+首先我们解不定方程 $ax+my = 1$。由于互素，一定存在合法解。现在等式左边等于 $1$，所以等式左边等于 $1$，所以在模 $m$ 意义下一定也等于 $1$。由于 $my$ 是 $m$ 的倍数，所以在模 $m$ 意义下等于 $0$。那么就可以得到 $ax \equiv 1 \mod m$。
+
+让 $a^{-1} = x$ 就是所求的逆元了。
+
+\end{document}
