@@ -5,7 +5,6 @@
 请 star 以示支持，谢谢。
 
 写作计划
-- 扩展欧几里得
 - Tarjan SCC/BCC
 - AC自动机
 - [palindromic series](https://codeforces.com/blog/entry/19193)
