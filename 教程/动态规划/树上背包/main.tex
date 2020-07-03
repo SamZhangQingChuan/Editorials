@@ -26,7 +26,7 @@
 \maketitle
 
 \section{问题}
-给一棵 $N$ 个点有根树，每个点 $i$ 有一个物品，体积为 $C_i$，价值为 $W_i$。如果选第 $i$ 个物品，必须同时选他的父亲。给定背包容量上限 $V$，求最大价值。
+给一棵 $N$ 个点的有根树，每个节点 $i$ 有一个物品，体积为 $C_i$，价值为 $W_i$。如果选第 $i$ 个节点的物品，必须同时选他的父亲。给定背包容量上限 $V$，求最大价值。
 
 复杂度要求 $O(NV)$
 
@@ -43,8 +43,6 @@
 
 \section{一些特殊泛化物品}
 
-\paragraph{加法单位元\textbf{0}}
-定义 \textbf{0} 为 $[-\infty,-\infty,\ldots,-\infty ]$，即在所有位置都取 $-\infty$。
 
 \paragraph{乘法单位元 \textbf{1}}
 定义 \textbf{1} 为 $[0,-\infty,\ldots,-\infty ]$，即在 $0$ 以外都取 $-\infty$。
@@ -56,10 +54,6 @@
 
 \section{性质}
 
-\paragraph{加法单位元}
-对于任意物品 $f$，$f + \textbf{0} = f$。
-
-证明：由定义显然。
 \paragraph{乘法单位元}
 对于任意物品 $f$，$f * \textbf{1} = f$。
 
@@ -98,16 +92,16 @@
 那么不难发现如下关系：
 
 $$
-dp_r = I(C_r,W_r) * (1+dp_{s_1})* (1+dp_{s_2}) * \cdots
+dp_r = I(C_r,W_r) * (\textbf{1}+dp_{s_1})* (\textbf{1}+dp_{s_2}) * \cdots
 $$
 
 由于计算组合每次是 $O(V^2)$ 的，总复杂度为 $O(NV^2)$，无法通过。
 
-现在考虑如何增量加上一个儿子的贡献：$f' = f * (1+dp_s)$，其中 $f$ 的初值为 $I(C_r,W_r)$，即只选根节点。
+现在考虑如何增量加上一个儿子的贡献：$f' = f * (\textbf{1}+dp_s)$，其中 $f$ 的初值为 $I(C_r,W_r)$，即只选根节点。
 
 展开可以得到如下结果：
 \begin{center}
-    $f' = f * (1+dp_s) = f*1 + f*dp_s = f + f*dp_s$
+    $f' = f * (\textbf{1}+dp_s) = f*\textbf{1} + f*dp_s = f + f*dp_s$
 \end{center}
 
 $f$ 是已知量，所以只需要求出 $f*dp_s$。
@@ -115,8 +109,8 @@ $f$ 是已知量，所以只需要求出 $f*dp_s$。
 利用乘法的结合律，我们可以换一个形式：
 \begin{align*}
     f*dp_s
-    &= f * (I(C_s,W_s) * (1+dp_{s_{1}^{\prime}})* (1+dp_{s_2^{\prime}}) * \cdots)\\
-    &= (f * I(C_s,W_s)) * (1+dp_{s_{1}^{\prime}})* (1+dp_{s_2^{\prime}}) * \cdots)
+    &= f * (I(C_s,W_s) * (\textbf{1}+dp_{s_{1}^{\prime}})* (\textbf{1}+dp_{s_2^{\prime}}) * \cdots)\\
+    &= (f * I(C_s,W_s)) * (\textbf{1}+dp_{s_{1}^{\prime}})* (\textbf{1}+dp_{s_2^{\prime}}) * \cdots)
 \end{align*}
 
 这相当于把 $s$ 的初值从 $I(C_s,W_s)$ 替换为 $f * I(C_s,W_s)$，由于 $I(C_s,W_s)$ 形式简单，这相当于强行在$f$中加入一个物品。这一步是 $O(V)$ 的，于是每多一个节点，复杂度只会多 $O(V)$。因此总复杂度是 $O(NV)$。
