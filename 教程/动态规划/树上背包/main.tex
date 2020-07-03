@@ -93,8 +93,6 @@
 
 \section{算法}
 
-以下假设根为 $1$。
-
 设以 $r$ 为根的子树对应的泛化物品为 $dp_r$，即 $dp_r[C]$ 等于这棵子树中总体积恰好为 $C$ 时的最大价值。这里我们规定必须要拿根 $r$对应的物品，即 $dp_r[i<C_r] = -\infty$。假设 $r$ 的儿子们分别为 $\{s_1,s_2,\ldots \}$。
 
 那么不难发现如下关系：
@@ -123,8 +121,10 @@ $f$ 是已知量，所以只需要求出 $f*dp_s$。
 
 这相当于把 $s$ 的初值从 $I(C_s,W_s)$ 替换为 $f * I(C_s,W_s)$，由于 $I(C_s,W_s)$ 形式简单，这相当于强行在$f$中加入一个物品。这一步是 $O(V)$ 的，于是每多一个节点，复杂度只会多 $O(V)$。因此总复杂度是 $O(NV)$。
 
-在DFS计算完 $f*dp_s$ 之后，通过 $O(V)$ 的时间计算 $f' = f+f*dp_s$ 即可。
+在DFS计算完 $f*dp_s$ 之后，通过 $O(V)$ 的时间更新 $f' = f+f*dp_s$ 即可。
+
+最终答案为 $dp[root]$ 中的最大值。
 
 \section{代码}
-\url{https://gist.github.com/SamZhangQingChuan/7c15974f308a45d6fcb114d029b4eda8}
+\href{https://gist.github.com/SamZhangQingChuan/7c15974f308a45d6fcb114d029b4eda8}{HDOJ 3593}
 \end{document}
