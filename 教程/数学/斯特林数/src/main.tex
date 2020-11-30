@@ -1,0 +1,132 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage[utf8]{inputenc}
+\usepackage{xeCJK}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{minted}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{parskip}
+\usepackage{soul}
+\usepackage{amssymb}
+\usepackage{cancel}
+\usepackage{ragged2e}
+\usepackage[normalem]{ulem}
+\usepackage[stable]{footmisc}
+\newtheorem*{lemma*}{Lemma}
+
+
+\title{斯特林数\footnote{更多内容请访问：\url{https://github.com/SamZhangQingChuan/Editorials}}}
+\author{张晴川\\\href{mailto:qzha536@aucklanduni.ac.nz}{\texttt{qzha536@aucklanduni.ac.nz}}}
+
+\begin{document}
+\maketitle
+
+
+\section{组合定义}
+
+\paragraph{（无符号）第一类斯特林数$\begin{bmatrix}
+n\\k
+\end{bmatrix}	$}
+将 $n$ 个有标号物体排成 $k$ 个圆排列的方案数。
+
+\paragraph{第二类斯特林数$\begin{Bmatrix}n\\k\end{Bmatrix}$}
+将 $n$ 个有标号物体分成 $k$ 个非空集合的方案数。
+
+
+\section{代数定义}
+
+\paragraph{（无符号）第一类斯特林数$\begin{bmatrix}n\\k\end{bmatrix}	$}
+
+上升幂展开后的系数
+$$
+x^{\underline{n}} =(x)(x+1)\cdots (x+n-1)= \sum_{k = 0}^n \begin{bmatrix}n\\k\end{bmatrix} x^k
+$$
+\paragraph{（有符号）第一类斯特林数$(-1)^{n-k}\begin{bmatrix}n\\k\end{bmatrix}$}
+下降幂展开后的系数
+
+$$
+x^{\overline{n}} = (x)(x-1)\cdots (x-n+1)= \sum_{k = 0}^n (-1)^{n-k}\begin{bmatrix}n\\i\end{bmatrix} x^k
+$$
+\paragraph{第二类斯特林数$\begin{Bmatrix}n\\k\end{Bmatrix}$}
+普通幂表示成下降幂之和的系数。
+
+$$
+x^n = \sum_{i=0}^n \begin{Bmatrix}n\\k\end{Bmatrix} x^{\underline{k}}
+$$
+
+\section{两类斯特林数的关系}
+
+考虑次数不高于$n$的多项式构成的线性空间，容易发现两组基：
+\begin{enumerate}
+    \item 普通幂：$\{1,x,x^2,\ldots, x^n\}$
+    \item 下降幂：$\{1,x,x^{\underline{2}},\ldots, x^{\underline{n}}\}$
+\end{enumerate}
+
+由代数定义，可以发现（有符号）第一类斯特林数就是把一个向量在普通幂这组基下的系数转成在下降幂这组基下的系数，而第二类斯特林数则是反过来。所以，如果把两类斯特林数看成矩阵，那么它们互为逆矩阵，即可以得到反演关系：
+$$
+F(n) =   \sum_{k = 0}^n (-1)^{n-k}\begin{bmatrix}n\\i\end{bmatrix} f(k)      \iff f(n) = \sum_{i=0}^n \begin{Bmatrix}n\\k\end{Bmatrix} F(k)
+$$
+
+\section{计算方法}
+
+\subsection{（有符号）第一类斯特林数}
+
+\paragraph{固定 $n$}
+其实也就是计算 $x^{\underline{n}}$。
+类似快速幂的方法，：$x^{\underline{2n}} = x^{\underline{n}}\times (x-n)^{\underline{n}}$，后者可以通过前者做一次 Taylor Shift 得到。
+
+无符号类似。
+\paragraph{固定 $k$}
+考虑单个圆排列的生成函数：$\ln(\frac{1}{1-x})$，那么 $k$ 个圆排列就是
+$$
+\frac{\ln(\frac{1}{1-x})^k}{k!}
+$$
+\subsection{第二类斯特林数}
+
+\paragraph{固定 $n$}
+现在我们需要将 $n$ 个元素放进 $k$ 个相同的盒子，容斥放了几个盒子就可以得到式子：
+$$
+\begin{Bmatrix}n\\k\end{Bmatrix} = \frac{1}{k!}\sum_{i=0}^k (-1)^{k-i}\binom{k}{i} i^{k}
+$$
+
+可以转成卷积的形式。
+
+
+\paragraph{固定 $k$}
+考虑单个集合的生成函数：$e^x-1$（去掉空集），那么 $k$ 个集合就是
+$$
+\frac{(e^x-1)^k}{k!}
+$$
+
+\section{下降幂的差分性质}
+
+学过微积分的都知道 $(x^n)' = nx^{n-1}$ ，然而在差分下，
+$$
+(x+1)^n - x^n = \sum_{i=0}^{n-1} \binom{n}{i}x^i
+$$，一共有 $n$项。但是下降幂的差分就很简单
+
+\begin{align*}
+    (x+1)^{\underline{n}} - x^{\underline{n}} 
+&= (x+1)(x)\cdots (x+1-n+1) - (x)\cdots (x-n+1)\\
+&= ((x+1)-(x-n+1))(x)\cdots (x+1-n+1)\\
+&= n(x)\cdots (x+1-n+1)\\
+&= nx^{\underline{n-1}}
+\end{align*}
+
+所以 $(x+1)^{\underline{n}} = x^{\underline{n}} + nx^{\underline{n-1}}$
+
+在 \href{https://darkbzoj.tk/problem/2159}{Crash 的文明世界} 一题中需要求某个值的 $k$ 次方。只需要求它的 $0,1,\ldots,k$ 次下降幂的值，最后用第二类斯特林数恢复出 $k$ 次方答案即可。由于转移每次是 $O(k)$ 的，总复杂度为 $O(nk)$，优于用普通幂转移的 $O(nk^2)$。
+
+
+
+\section{例题}
+\begin{enumerate}
+    \item \href{https://judge.yosupo.jp/problem/stirling_number_of_the_first_kind}{第一类斯特林数}
+    \item \href{https://judge.yosupo.jp/problem/stirling_number_of_the_second_kind}{第二类斯特林数}
+\end{enumerate}
+
+\end{document}
