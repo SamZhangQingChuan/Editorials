@@ -1,0 +1,248 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage[utf8]{inputenc}
+\usepackage{xeCJK}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{minted}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{ragged2e}
+\usepackage[normalem]{ulem}
+\usepackage[stable]{footmisc}
+\usetheme{Warsaw}
+
+
+\title{LeetCode 周赛趣题选讲}
+\author{Qingchuan Zhang\\ qingczha@microsoft.com}
+\institute{Microsoft}
+
+
+
+\begin{document}
+\begin{frame}
+\maketitle
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows/}{Find the Kth Smallest Sum of a Matrix With Sorted Rows}}{题意}
+
+给定一个 $m \times n$ 的矩阵 \texttt{mat}，以及一个整数 $k$，矩阵中的每一行都以非递减的顺序排列。
+
+从每一行中选出 $1$ 个元素形成一个数组。返回所有可能数组中的第 $k$ 小的数组和。
+\begin{itemize}
+    \item $1 \le m, n \le 40$
+    \item $1 \le k \le \min(200, n^m)$
+    \item $1 \le \texttt{mat}[i][j] \le 5000$
+    \item $\texttt{mat}[i]$ 是一个非递减数组
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/find-the-kth-smallest-sum-of-a-matrix-with-sorted-rows/}{Find the Kth Smallest Sum of a Matrix With Sorted Rows}}{题解}
+
+\begin{enumerate}
+    \item 如何枚举所有 $n^m$ 种情况？ DFS? $m$ 个 for 循环？
+    \item 考虑用 BFS ``并行" 枚举所有答案，截止到第一行有哪些状态？第二行呢？
+    \item 所有状态都需要吗？
+    \item 每一行处理结束后，只需要保留权值最小的 $k$ 个状态即可。
+    \item Bonus: 有显著更快的方法吗？（提示：二分答案）
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/maximum-number-of-darts-inside-of-a-circular-dartboard/}{Maximum Number of Darts Inside of a Circular Dartboard}}{题意}
+
+二维平面上有 $n$ 个点 $(x_i,y_i)$，问一个半径为 $r$ 的圆最多能覆盖多少个点（圆周上亦可）。
+
+\begin{itemize}
+    \item $1\le n\le 100$
+    \item $-10^4 \le x_i,y_i \le 10^4$
+    \item $1\le r\le 5000$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/maximum-number-of-darts-inside-of-a-circular-dartboard/}{Maximum Number of Darts Inside of a Circular Dartboard}}{题解}
+
+\begin{enumerate}
+    \item 首先至少能覆盖一个点，我们只需要考虑至少覆盖两个点的情况。以下假设存在这种情况。
+    \item 针对一个最优解，我们总是可以移动圆使得边界上存在一个点，记作点 $A$。
+    \item 以 $A$ 为中心，我们把圆旋转。由于圆内有另外一点，那么在某个时刻必定会碰到另一个点，记作点 $B$。
+    \item 因此至少\textbf{存在}一个最优解满足圆的边界上存在两个点。
+    \item 高中（初中？）数学告诉我们：给定圆周上两个点以及半径 $r$，至多有两个圆，且圆心在两点连线的垂直平分线上。
+    \item 因此，最终做法就是枚举圆周上的两个点，求出两个圆，判断每个圆覆盖了多少点，取最大值即可。
+\end{enumerate}
+\end{frame}
+
+
+
+
+
+\begin{frame}{\href{https://leetcode.com/problems/minimum-possible-integer-after-at-most-k-adjacent-swaps-on-digits/}{Minimum Possible Integer After at Most K Adjacent Swaps On Digits}}{题意}
+
+给一个数字串 $num$ 和一个限制 $k$。可以至多交换 $k$ 次相邻元素，最小化最终串的字典序。
+
+\begin{itemize}
+    \item $1 \le num.length \le 30000$
+    \item $1\le k \le 10^9$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/minimum-possible-integer-after-at-most-k-adjacent-swaps-on-digits/}{Minimum Possible Integer After at Most K Adjacent Swaps On Digits}}{题解}
+
+\begin{enumerate}
+    \item 最小化字典序必定是最小化第一个数位，然后在此基础上最小化第二个数位，以此类推。
+    \item 考虑第一个位置，如何判断某个数字 $d$ 是否可行？
+    \item 当然是考虑把最近的 $d$ 换过来。假设 $d$ 的第一次出现位置在 $i$（0-based），那么可行当且仅当 $i \le k$。从 $0$ 枚举到 $9$，选择第一个可行的即可。
+    \item 处理完第 $i$ 个位置，如何处理第 $i+1$个呢？由于把某个数换到最前面会导致其后面的距离都更近了一步，所以需要交换的次数等于目标数字位置与当前位置之间仍然存在的个数加一。
+    \item 考虑对每个数字开一个栈（需要支持随机访问），储存所有出现位置。对于每个数字，求出范围内仍然存在的元素个数，求和即可。 在得到每一位的答案后，从对应栈中 pop 掉。
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/}{Find Critical and Pseudo-Critical Edges in Minimum Spanning Tree}}
+{题意}
+
+给一个 $n$ 个点 $m$ 条边的带权无向图，对于每条边，判断其是\textbf{关键边}还是\textbf{伪关键边}或二者皆非。
+
+\begin{enumerate}
+    \item 关键边：存在于每棵最小生成树中。
+    \item 伪关键边：存在于某棵最小生成树中，但不是所有。
+\end{enumerate}
+
+\begin{itemize}
+    \item $2\le n\le 100$
+    \item $n-1\le m\le \min(\binom{n}{2},200)$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/}{Find Critical and Pseudo-Critical Edges in Minimum Spanning Tree}}
+{题解}
+
+\begin{enumerate}
+    \item 考虑如何判断一条边是否是关键边：首先求MST的权值，然后把这条边删了再求一遍，如果删去后图不联通或权值变大，那么是关键边。
+    \item 对于其余边，我们强制使用它（把两个点在并查集中直接缩点），如果MST权值不变大，那么是伪关键边。
+    \item Bonus：是否存在 $O(n+m)$ 的做法？ 提示：考虑Kruskal的过程 + Tarjan 求桥。
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/valid-permutations-for-di-sequence/}{Valid Permutations for DI Sequence}}
+{题意}
+给定一个由 \texttt{'I'} 和 \texttt{'D'} 组成的长度为 $n-1$ 的字符串 $s$。
+
+求有多少 $1-n$ 的排列 $p$ 与 $s$ 的描述相匹配，即如果$s_i = \texttt{'I'}$，则 $p_i < p_{i+1}$；如果$s_i = \texttt{'D'}$，则 $p_i > p_{i+1}$。
+
+
+\begin{itemize}
+    \item $1 \leq n \leq 200$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/valid-permutations-for-di-sequence/}{Valid Permutations for DI Sequence}}
+{题解}
+
+\begin{enumerate}
+    \item 首先考虑暴力枚举加剪枝的做法。从最后一位开始确定，假设 $p_n = x$ ，那么我们想求出有多少种 $\{1,\ldots n\}\setminus \{x\}$ 的排列满足 $s_{1\ldots n-2}$ 的要求，且最末元素小于（或大于） $x$。 
+    \item 集合 $\{1,\ldots n\}\setminus \{x\}$ 和集合$\{1,\ldots n-1\}$ 本质相同。$\{1,\ldots n\}\setminus \{x\}$的排列以第$i$个数结尾的方案数等于 $\{1,\ldots n-1\}$的排列以第$i$个数结尾的方案数。
+
+    \item 现在设 $\texttt{dp}[l][i]$ 表示 $\{1,\ldots l\}$ 有多少种排列满足$s_{1\ldots l-1}$的要求且以第 $i$ 个数结尾，其中 $\texttt{dp}[1][1] = 1$。
+
+
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode.com/problems/valid-permutations-for-di-sequence/}{Valid Permutations for DI Sequence}}
+{题解}
+
+\begin{enumerate}
+    \item 可以得到转移方程：
+        $$
+        \texttt{dp}[l][x] = 
+        \begin{cases}
+         \displaystyle\sum_{i = 1}^{x-1}\texttt{dp}[l-1][i] & s_{l-1} = \texttt{'I<'}\\
+         \displaystyle\sum_{i = x}^{l-1}\texttt{dp}[l-1][i] & s_{l-1} = \texttt{'D>'}\\
+        \end{cases}
+        $$
+    \item 注：在 \texttt{'D>'} 的情况下，下标从 $x$ 开始是因为$\{1,\ldots l\}\setminus \{x\}$ 的第$x$个元素是 $x+1$ 比 $x$ 大。
+    \item Bonus：有 $O(n^2)$ 的做法吗？ 
+
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode-cn.com/problems/maximum-number-of-non-overlapping-substrings/}{Maximum Number of Non-Overlapping Substrings}}{题意}
+
+给你一个只包含小写字母的字符串 $s$， 你需要找到 $s$ 中最多数目的非空子字符串，满足如下条件：
+
+\begin{itemize}
+    \item 这些字符串之间互不重叠，即对于任意两个子串$\texttt{s[i..j]}$ 和 $\texttt{s[k..l]}$，要么 $j < k$ 要么 $i > l$。
+    \item 如果一个子字符串包含字符 $char$，那么 $s$ 中所有的 $char$ 字符都应该在这个子字符串中。
+\end{itemize}
+
+你需要选出满足条件的最多个子字符串，如果有多解，最小化子字符串总长度。
+\begin{itemize}
+    \item $1 \leq |s| \leq 10 ^ 5$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{\href{https://leetcode-cn.com/problems/maximum-number-of-non-overlapping-substrings/}{Maximum Number of Non-Overlapping Substrings}}
+{题解}
+
+\begin{enumerate}
+    \item \texttt{aba} 的答案?
+    \item \texttt{abab} 的答案?
+    \item 如果选字符 a 就需要选字符 b，但选b不用选a，那么最终肯定不会选b。
+    \item 如果a和b只能同时选或同时不选，那么可以视作同一个字符。
+    \item 用DFS/BFS/Floyd/Tarjan把依赖关系中的环缩起来，选择所有出度为0的节点，这样是最优的。
+\end{enumerate}
+\end{frame}
+
+
+
+
+
+
+
+
+\begin{frame}{\href{https://leetcode-cn.com/problems/number-of-ways-to-wear-different-hats-to-each-other/}{Number of Ways to Wear Different Hats to Each Other}}
+{题意}
+
+总共有 $n$ 个人和 $40$ 种不同的帽子，帽子编号从 $1$ 到 $40$。
+
+给你一个整数列表的列表 $hats$，其中$\texttt{hats[i]}$ 是第 $i$ 个人所喜欢帽子的列表。
+
+请你给每个人安排一顶他喜欢的帽子，确保每个人戴的帽子跟别人都不一样，并返回方案数。
+
+由于答案可能很大，请返回它对$10^9 + 7$ 取余的结果。
+\begin{itemize}
+    \item $1 \leq n \leq 10$
+    \item $2 \leq \texttt{hats[i].length} \leq 40$
+    \item $1 \leq \texttt{hats[i][j]} \leq 40$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\href{https://leetcode-cn.com/problems/number-of-ways-to-wear-different-hats-to-each-other/}{Number of Ways to Wear Different Hats to Each Other}}
+{题解}
+
+\begin{enumerate}
+    \item 二分图最大匹配计数（迫真
+    \item 状态压缩DP，记录前 $i$ 个人戴了哪些帽子，复杂度 $O(n\times 2^{40})$
+    \item 但帽子和人其实没有区别，所以……
+    \item 状态压缩DP，记录前 $i$ 个帽子戴了哪些人，复杂度 $O(40\times 2^n)$
+\end{enumerate}
+\end{frame}
+
+
+
+
+\end{document}
