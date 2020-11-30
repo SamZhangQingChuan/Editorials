@@ -1,0 +1,167 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage[utf8]{inputenc}
+\usepackage{xeCJK}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{minted}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{ragged2e}
+\usepackage[normalem]{ulem}
+\usepackage[stable]{footmisc}
+\usetheme{Warsaw}
+
+
+\title{A Few Knapsacks}
+\author{Qingchuan Zhang\\ qingczha@microsoft.com}
+\institute{Microsoft}
+
+
+
+\begin{document}
+\begin{frame}
+\maketitle
+\end{frame}
+
+
+\begin{frame}{\href{https://vjudge.net/problem/51Nod-1085}{01背包}}{题意}
+
+有 $N$ 个物品和 $V$ 元预算。第 $i$ 个物品的成本和收益分别是 $c_i$ 和 $v_i$。每个物品最多能拿 $1$ 个。
+
+计算总成本不超过预算下的最大收益。
+
+
+
+\begin{itemize}
+    \item $ N \le 100$
+    \item $ c_i\le V \le 10000$
+\end{itemize}
+\end{frame}
+\begin{frame}{\href{https://vjudge.net/problem/51Nod-1085}{01背包}}{题解}
+
+\begin{enumerate}
+    \item 暴力搜索 $O(2^n)$ 
+    \item 我们真的关心之前具体选了什么吗？
+    \item 两种选择方案如果成本相同，只需要记录收益高的那种。
+    \item 用$\texttt{dp}[i][j]$ 表示前 $i$ 种物品一共用了 $j$ 块钱得到的最大收益。
+    \item 考虑拿与不拿：$\texttt{dp}[i][j] = \max(\texttt{dp}[i-1][j-c_i]+v_i,\texttt{dp}[i-1][j])$
+    \item 压缩空间
+\end{enumerate}
+
+
+\end{frame}
+
+\begin{frame}{\href{https://vjudge.net/problem/51Nod-2649}{完全背包}}{题意}
+有 $N$ 个物品和 $V$ 元预算。第 $i$ 个物品的成本和收益分别是 $c_i$ 和 $v_i$。每个物品最多能拿 $\infty$ 个。
+
+计算总成本不超过预算下的最大收益。
+
+\begin{itemize}
+    \item $ N \le 100$
+    \item $ c_i\le V \le 50000$
+\end{itemize}
+
+\end{frame}
+\begin{frame}{\href{https://vjudge.net/problem/51Nod-2649}{完全背包}}{题解}
+\begin{enumerate}
+    \item 和上题类似，用$\texttt{dp}[i][j]$ 表示前 $i$ 种物品一共用了 $j$ 块钱得到的最大收益。
+    \item 考虑拿与不拿：$\texttt{dp}[i][j] = \max(\texttt{dp}[i][j-c_i]+v_i,\texttt{dp}[i-1][j])$
+    \item 压缩空间
+
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{\href{https://vjudge.net/problem/51Nod-1086}{多重背包}}{题意}
+有 $N$ 个物品和 $V$ 元预算。第 $i$ 个物品的成本和收益分别是 $c_i$ 和 $v_i$。每个物品最多能拿 $m_i$ 个。
+
+计算总成本不超过预算下的最大收益。
+
+\begin{itemize}
+    \item $ N \le 100$
+    \item $ c_i\le V \le 50000$
+    \item $ m_i \le 200$
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{\href{https://vjudge.net/problem/51Nod-1086}{多重背包·二进制拆分}}{题解}
+\begin{enumerate}
+    \item 对于每个物品做 $m_i$ 次01背包，然而太慢。
+    \item 拆分成 $\{1,2,4,\cdots , m_i -(1+2+4+\cdots)\}$
+    \item 可以证明能恰好凑出 $[0,m_i]$ 中所有的数字。
+    \item 转化为 $\log(m_i)$ 次 01背包。
+\end{enumerate}
+\end{frame}
+
+
+
+\begin{frame}{\href{https://vjudge.net/problem/51Nod-1086}{多重背包·单调队列}}{题解}
+
+\begin{enumerate}
+    \item 首先我们假设成本 $c_i = 1$。
+    \item 枚举买了 $k$ 个，那么 $\texttt{dp}[i][j] = \max_{0\le k\le m_i}( \texttt{dp}[i-1][j-k]+k\times v_i)$
+    \item $\texttt{dp}[i][j-a]+av_i \ge \texttt{dp}[i][j-b]+bv_i$
+    \item $\iff \texttt{dp}[i][j-a] - \texttt{dp}[i][j-b] \ge (b- a)v_i$
+    \item 于是两个决策谁更优只取决于差值
+    \item $c_i \ne 1$ 时只需要按照 $j \bmod c_i$ 分组即可。
+\end{enumerate}
+
+
+
+
+\end{frame}
+
+\begin{frame}{\href{https://szkopul.edu.pl/problemset/problem/4CirgBfxbj9tIAS2C7DWCCd7/site/?key=statement}{最短路背包}}{题意}
+
+给一个正整数集合 $A = \{a_1,a_2,\ldots,a_n\}$，$k$次询问，每次需要判断 $b_i$ 是否能通过 $A$ 中的数凑出来，每个数可以使用任意多次。
+
+\begin{itemize}
+    \item $ n \le 5000$
+    \item $ a_i\le 50000$
+    \item $ b_i \le 10^9$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{\href{https://szkopul.edu.pl/problemset/problem/4CirgBfxbj9tIAS2C7DWCCd7/site/?key=statement}{最短路背包}}{题解}
+
+\begin{enumerate}
+    \item 暴力跑完全背包，$O(n\times 10^9)$
+    \item 注意到如果 $x$ 可以凑出来，那么 $x+a_1$ 也可以凑出来。
+    \item 对于 $r = 0,1,\ldots,a_1-1$ ，求出最小能凑出来的数 $x_r$ 满足 $x_r \bmod a_1 = r$
+    \item $x_r$ 满足 $x_{(r+a_i) \bmod a_1} \le x_r + a_i$，最短路即可。
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{\href{https://open.kattis.com/problems/thief}{Jewel Thief}}{题意}
+有 $N$ 个物品和 $V$ 元预算。第 $i$ 个物品的成本和收益分别是 $c_i$ 和 $v_i$。每个物品最多能拿 $1$ 个。
+
+计算总成本为 $1,2,\ldots ,V$ 时的最大收益。
+\begin{itemize}
+    \item $ N \le 1000000$
+    \item $ V \le 100000$
+    \item $ 1\le c_i \le 300$
+\end{itemize}
+
+\end{frame}
+\begin{frame}{\href{https://open.kattis.com/problems/thief}{Jewel Thief}}{题解}
+
+\begin{enumerate}
+    \item 把物品按照价格分组，最多有 $300$ 组。
+    \item 对于相同价格的物品，肯定优先拿价值高的，所以按照价值从大到小排序。
+    \item 与单调队列解多重背包一样，我们假设价格为 $1$。
+    \item 由于按照价值排序，前缀和具有凸性，所以存在决策单调性。
+    \item 对于每个点，二分出第一次成为最优决策的位置即可。（也可以用分治的方法做）
+\end{enumerate}
+\end{frame}
+
+
+
+
+\end{document}
