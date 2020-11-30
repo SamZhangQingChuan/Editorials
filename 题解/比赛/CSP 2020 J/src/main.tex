@@ -1,0 +1,146 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage[utf8]{inputenc}
+\usepackage{xeCJK}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{minted}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{parskip}
+\usepackage{soul}
+\usepackage{cancel}
+\usepackage{ragged2e}
+\usepackage[normalem]{ulem}
+\usepackage[stable]{footmisc}
+
+\title{CSP 2020 J 题解}
+\author{张晴川@实验舱}
+
+
+\begin{document}
+
+\maketitle
+\section{优秀的拆分}
+\subsection*{大意}
+给定正整数 $n$，将其拆分为若干不同的 $2$ 的\textbf{正整数}次幂之和或输出无解。
+\subsection*{数据范围}
+\begin{itemize}
+\item $1\le n \le 10^7$
+\end{itemize}
+\subsection*{题解}
+由于 $2$ 的正整数次幂一定是偶数，如果 $n$ 是奇数，直接输出无解。否则从大到小枚举 $2$ 的幂，如果 $n$ 在二进制下的的对应位是 $1$ 就输出。具体参考代码。
+\subsection*{复杂度}
+\begin{itemize}
+\item 时间：$O(\log(n))$
+\item 空间：$O(1) $
+\end{itemize}
+\subsection*{代码}
+\inputminted[linenos,autogobble]{cpp}{T1.cpp}
+
+
+\section{直播获奖}
+\subsection*{大意}
+有 $n$ 个人，第 $i$ 个人的分数为一个整数 $a_i$。给定获奖比例 $w$。假设只考虑前 $p$ 个人，那么获奖分数线为从高到低第 $\max(1,\lfloor p*w\% \rfloor)$ 个人的成绩。求出 $p = 1,2,\ldots,n$ 时的分数线。
+
+\subsection*{数据范围}
+\begin{itemize}
+\item $1\le n\le 10^5$
+\item $1\le w \le 99$
+\item $0\le a_i \le 600$
+\end{itemize}
+\subsection*{题解}
+考虑模拟题意，枚举 $p = 1,2,\ldots,n$。首先计算使用题中的公式计算出获奖人数，注意需要全部使用整数计算。
+
+如果每次将 $p$ 个人的成绩重新排序然后得到分数线，那么只能得到过 $6/20$ 个点。但如果每次使用插入排序，（应当）可以通过 $n \le 2000$ 的测试点。
+
+考虑到每个人的分数都是 $[0,600]$ 内的整数，我们只需要对每个成绩开一个桶，每次相同分数的人可以一起考虑。该做法复杂度为 $O(601n)$，可以通过。
+
+\subsection*{复杂度}
+\begin{itemize}
+\item 时间：$O(601n)$
+\item 空间：$O(601)$
+\end{itemize}
+\subsection*{代码}
+\inputminted[linenos,autogobble]{cpp}{T2.cpp}
+
+\section{表达式}
+\subsection*{大意}
+给定一个包含 $n$ 个布尔变量、与运算$\&$、或运算$|$以及取反运算 $!$ 的后缀表达式 $s$。每个变量出现恰好一次。给定每个变量的初始值。每次询问将一个变量取反，求原始表达式的真值。每次询问独立，即并不真的修改变量的值。
+
+\subsection*{数据范围}
+\begin{itemize}
+\item $1\le |s| \le 10^6$
+\item $1\le q\le 10^5 $
+\item $2\le n \le 10^5$
+\end{itemize}
+\subsection*{题解}
+首先使用一个栈将后缀表达式转为一棵表达式树，并记录每个变量对应的节点。
+
+针对 $n \le 1000$ 的测试点，我们只需要每次修改对应变量的值，并DFS整棵表达式树重新求值即可，复杂度为 $O(n^2)$。
+
+为了通过所有测试点，首先我们需要用DFS自下而上预处理出表达树上每棵子树的值。现在我们在每棵子树的根节点上开设两个变量，$dp[0/1]$，分别表示当前子树的值是 $0/1$ 时，整棵表达式树的值。但这应如何计算？
+
+对于根节点，显然 $dp[0/1] = 0/1$。而对于非根节点，我们可根据其父亲的操作符类型分类讨论，$\texttt{cousin->val}$表示兄弟节点的初始值：
+
+\begin{itemize}
+    \item $\&$：那么 $\texttt{dp[v] = father->dp[v \& cousin->val]}$
+    \item $|$：那么 $\texttt{dp[v] = father->dp[v | cousin->val]}$
+    \item $!$：那么 $\texttt{dp[v] = father->dp[!v]}$
+\end{itemize}
+
+根据以上公式，我们可以自上而下地 $O(n)$ 计算出每个节点的 $dp$ 值。针对每次询问，只需要 $O(1)$ 查表回答即可。
+
+\subsection*{复杂度}
+\begin{itemize}
+\item 时间：$O(n)$
+\item 空间：$O(n)$
+\end{itemize}
+\subsection*{代码}
+\inputminted[linenos,autogobble]{cpp}{T3.cpp}
+
+\section{方格取数}
+\subsection*{大意}
+给定二维矩阵 $a[n][m]$。现在需要从左上角走到右下角，每次可以向上、下、右走一步，但不能重复经过同一个格子，求最大化走过的格子的权值和是多少。
+\subsection*{数据范围}
+\begin{itemize}
+\item $1\le n,m\le 10^3$
+\item $|a[i][j]|\le 10^4$
+\end{itemize}
+\subsection*{题解}
+设 $dp[i][j]$ 为从起点走到 $a[i][j]$ 的最大权值和。
+
+第一列的值是容易求的，因为从起点出发只有一种走法。
+
+考虑已经求完了第 $j$ 列的 $dp$ 值，应该如何推出第 $j+1$ 列的值呢？
+
+假设在计算 $dp[i][j+1]$，我们可以枚举是从第 $j$ 列的哪个格子向右走过来的，不妨设为 $i'$。这里有两种情况 $i'\le i$ 和 $i' \ge i$，先假设 $i'\le i$，另一种情况类似。那么可以得到：
+$$
+dp[i][j+1] = \min_{1\le i'\le i}(dp[i'][j] + \sum_{x = i'}^i a[x][j+1])
+$$
+
+根据这个式子暴力计算，可以通过 70\% 的数据。
+
+但我们可以利用式子的特殊性质进行加速，注意到：
+\begin{align}
+    dp[i+1][j+1] 
+    &= \min_{1\le i'\le i+1}(dp[i'][j] + \sum_{x = i'}^{i+1} a[x][j+1])\\
+    &= \min_{1\le i'\le i+1}(dp[i'][j] + \sum_{x = i'}^{i} a[x][j+1]) + a[i+1][j+1]  \\
+    &= \min(dp[i][j+1],dp[i+1][j]) + a[i+1][j+1]  
+\end{align}
+
+所以只需要从上面的格子 $O(1)$ 转移过来即可，对于 $i' \ge i$ 的情况也一样。于是对于每一列，只需要上下各扫一次即可完成计算，总复杂度 $O(nm)$，可以通过。
+
+\subsection*{复杂度}
+\begin{itemize}
+\item 时间：$O(nm)$
+\item 空间：$O(nm)$
+\end{itemize}
+\subsection*{代码}
+\inputminted[linenos,autogobble]{cpp}{T4.cpp}
+
+
+
+
+\end{document}
